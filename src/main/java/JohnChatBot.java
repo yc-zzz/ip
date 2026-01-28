@@ -8,11 +8,28 @@ public class JohnChatBot {
         Scanner myObj = new Scanner(System.in);
         String line = "";
 
+        String[] tasks = new String[100];
+        int taskcount = 0;
+
         while (!line.equals("bye")) {
             line = myObj.nextLine();
 
-            if (!line.equals("bye")) {
-                System.out.println(line);
+            if (line.equals("bye")) {
+                break;
+            }
+            else if (line.equals("list")) {
+                if (taskcount == 0) {
+                    System.out.println("Nothing in list");
+                } else {
+                    for (int i = 0; i < taskcount; i++) {
+                        System.out.println((i + 1) + ". " + tasks[i]);
+                    }
+                }
+            }
+            else {
+                tasks[taskcount] = line;
+                taskcount++;
+                System.out.println("added: " + line);
             }
         }
 
