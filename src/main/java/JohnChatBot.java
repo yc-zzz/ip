@@ -8,7 +8,7 @@ public class JohnChatBot {
         Scanner myObj = new Scanner(System.in);
         String line = "";
 
-        String[] tasks = new String[100];
+        Task[] tasks = new Task[100];
         int taskcount = 0;
 
         while (!line.equals("bye")) {
@@ -26,8 +26,20 @@ public class JohnChatBot {
                     }
                 }
             }
+            else if (line.startsWith("mark ")) {
+                int index = Integer.parseInt(line.split(" ")[1]) - 1;
+                tasks[index].mark();
+                System.out.println("Nice! I've marked this task as done:");
+                System.out.println("  " + tasks[index]);
+            }
+            else if (line.startsWith("unmark ")) {
+                int index = Integer.parseInt(line.split(" ")[1]) - 1;
+                tasks[index].unmark();
+                System.out.println("OK, I've marked this task as not done yet:");
+                System.out.println("  " + tasks[index]);
+            }
             else {
-                tasks[taskcount] = line;
+                tasks[taskcount] = new Task(line);
                 taskcount++;
                 System.out.println("added: " + line);
             }
