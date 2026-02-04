@@ -34,10 +34,36 @@ public class JohnChatBot {
                 tasks[index].unmark();
                 System.out.println("OK, I've marked this task as not done yet:");
                 System.out.println("  " + tasks[index]);
-            } else {
-                tasks[taskcount] = new Task(line);
+            } else if (line.startsWith("todo ")) {
+                String description = line.substring(5);
+                tasks[taskcount] = new Todo(description);
                 taskcount++;
-                System.out.println("added: " + line);
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskcount - 1]);
+
+            } else if (line.startsWith("deadline ")) {
+                String[] parts = line.split(" /by ");
+                String description = parts[0].substring(9);
+                String by = parts[1];
+
+                tasks[taskcount] = new Deadline(description, by);
+                taskcount++;
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskcount - 1]);
+
+            } else if (line.startsWith("event ")) {
+                String[] parts = line.split(" /from | /to ");
+                String description = parts[0].substring(6);
+                String from = parts[1];
+                String to = parts[2];
+
+                tasks[taskcount] = new Event(description, from, to);
+                taskcount++;
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskcount - 1]);
+
+            } else {
+                System.out.println("Whatchu talking fam?");
             }
         }
 
