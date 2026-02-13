@@ -1,3 +1,4 @@
+package johnchatbot;
 import java.util.Scanner;
 
 public class JohnChatBot {
