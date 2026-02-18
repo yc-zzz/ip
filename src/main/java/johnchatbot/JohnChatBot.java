@@ -1,5 +1,6 @@
 package johnchatbot;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class JohnChatBot {
     public static void main(String[] args) {
@@ -9,8 +10,7 @@ public class JohnChatBot {
         Scanner myObj = new Scanner(System.in);
         String line = "";
 
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         while (true) {
             line = myObj.nextLine();
@@ -18,9 +18,7 @@ public class JohnChatBot {
                 break;
             }
             try {
-                if (handleCommand(line, tasks, taskCount)) {
-                    taskCount++;
-                }
+                handleCommand(line, tasks);
             } catch (JohnChatBotException e) {
                 System.out.println("ERROR: " + e.getMessage());
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
@@ -32,39 +30,34 @@ public class JohnChatBot {
         myObj.close();
     }
 
-    private static boolean handleCommand(String line, Task[] tasks, int taskCount) throws JohnChatBotException {
+    private static void handleCommand(String line, ArrayList<Task> tasks) throws JohnChatBotException {
         if (line.equals("list")) {
-            if (taskCount == 0) {
+            if (tasks.isEmpty()) {
                 System.out.println("Nothing in list");
             } else {
-                for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + ". " + tasks[i]);
+                for (int i = 0; i < tasks.size(); i++) {
+                    System.out.println((i + 1) + ". " + tasks.get(i));
                 }
             }
-            return false;
         } else if (line.startsWith("mark ")) {
             int index = Integer.parseInt(line.split(" ")[1]) - 1;
-            validateIndex(index, taskCount);
-            tasks[index].mark();
-            System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  " + tasks[index]);
-            return false;
+            validateIndex(index, tasks.size());
+            tasks.get(index).mark();
+            System.out.println("Nice! I've marked this task as done:\n  " + tasks.get(index));
+
         } else if (line.startsWith("unmark ")) {
             int index = Integer.parseInt(line.split(" ")[1]) - 1;
-            validateIndex(index, taskCount);
-            tasks[index].unmark();
-            System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  " + tasks[index]);
-            return false;
+            validateIndex(index, tasks.size());
+            tasks.get(index).unmark();
+            System.out.println("OK, I've marked this task as not done yet:\n  " + tasks.get(index));
+
         } else if (line.startsWith("todo ")) {
-            String description = line.substring(5);
+            String description = line.substring(5).trim();
             if (description.isEmpty()) {
                 throw new JohnChatBotException("The description of a todo cannot be empty, mate.");
             }
-            tasks[taskCount] = new Todo(description);
-            System.out.println("Got it. I've added this task:");
-            System.out.println("  " + tasks[taskCount]);
-            return true;
+            tasks.add(new Todo(description));
+            System.out.println("Got it. I've added this task:\n  " + tasks.get(tasks.size() - 1));
 
         } else if (line.startsWith("deadline ")) {
             if (!line.contains(" /by ")) {
@@ -73,10 +66,8 @@ public class JohnChatBot {
             String[] parts = line.split(" /by ");
             String description = parts[0].substring(9);
             String by = parts[1];
-            tasks[taskCount] = new Deadline(description, by);
-            System.out.println("Got it. I've added this task:");
-            System.out.println("  " + tasks[taskCount]);
-            return true;
+            tasks.add(new Deadline(description, by));
+            System.out.println("Got it. I've added this task:\n  " + tasks.get(tasks.size() - 1));
 
         } else if (line.startsWith("event ")) {
             if (!line.contains(" /from ") || !line.contains(" /to ")) {
@@ -84,22 +75,23 @@ public class JohnChatBot {
             }
             String[] parts = line.split(" /from | /to ");
             String description = parts[0].substring(6);
-            String from = parts[1];
-            String to = parts[2];
+            tasks.add(new Event(description, parts[1], parts[2]));
+            System.out.println("Got it. I've added this task:\n  " + tasks.get(tasks.size() - 1));
 
-            tasks[taskCount] = new Event(description, from, to);
-            System.out.println("Got it. I've added this task:");
-            System.out.println("  " + tasks[taskCount]);
-            return true;
+        } else if (line.startsWith("delete ")) {
+            int index = Integer.parseInt(line.split(" ")[1]) - 1;
+            validateIndex(index, tasks.size());
+            Task removed = tasks.remove(index);
+            System.out.println("Noted. I've removed this task:\n  " + removed);
+            System.out.println("Now you have " + tasks.size() + " tasks in the list.");
 
         } else {
             System.out.println("I have no idea what you are talking about, pal.");
-            return false;
         }
     }
 
-    private static void validateIndex(int index, int taskCount) throws JohnChatBotException {
-        if (index < 0 || index >= taskCount) {
+    private static void validateIndex(int index, int size) throws JohnChatBotException {
+        if (index < 0 || index >= size) {
             throw new JohnChatBotException("That task index doesn't exist, cowboy.");
         }
     }
