@@ -18,15 +18,8 @@ public class JohnChatBot {
         String line = "";
 
         ArrayList<Task> tasks = new ArrayList<>();
+        loadTasks(tasks);
 
-        try {
-            loadTasks(tasks);
-        } catch (FileNotFoundException e) {
-            File directory = new File("data");
-            if (!directory.exists()) {
-                directory.mkdir();
-            }
-        }
 
         while (true) {
             line = myObj.nextLine();
@@ -107,7 +100,14 @@ public class JohnChatBot {
     }
 
     private static void saveTasks(ArrayList<Task> tasks) throws IOException {
-        FileWriter fw = new FileWriter(FILE_PATH);
+        File f = new File(FILE_PATH);
+        if (!f.getParentFile().exists()) {
+            f.getParentFile().mkdirs();
+        }
+        if (!f.exists()) {
+            f.createNewFile();
+        }
+        FileWriter fw = new FileWriter(f); // Use the file object
         for (Task t : tasks) {
             String type = (t instanceof Todo) ? "T" : (t instanceof Deadline) ? "D" : "E";
             String isDone = t.isDone ? "1" : "0";
@@ -122,25 +122,31 @@ public class JohnChatBot {
         fw.close();
     }
 
-    private static void loadTasks(ArrayList<Task> tasks) throws FileNotFoundException {
-        File f = new File(FILE_PATH);
-        if (!f.exists()) return;
-        Scanner s = new Scanner(f);
-        while (s.hasNext()) {
-            String[] p = s.nextLine().split(" \\| ");
-            Task t;
-            if (p[0].equals("T")) {
-                t = new Todo(p[2]);
-            } else if (p[0].equals("D")) {
-                t = new Deadline(p[2], p[3]);
-            } else {
-                t = new Event(p[2], p[3], p[4]);
+    private static void loadTasks(ArrayList<Task> tasks) {
+        try {
+            File f = new File(FILE_PATH);
+            if (!f.exists()) {
+                return;
             }
-            if (p[1].equals("1")) {
-                t.mark();
+            Scanner s = new Scanner(f);
+            while (s.hasNext()) {
+                String[] p = s.nextLine().split(" \\| ");
+                Task t;
+                if (p[0].equals("T")) {
+                    t = new Todo(p[2]);
+                } else if (p[0].equals("D")) {
+                    t = new Deadline(p[2], p[3]);
+                } else {
+                    t = new Event(p[2], p[3], p[4]);
+                }
+                if (p[1].equals("1")) {
+                    t.mark();
+                }
+                tasks.add(t);
             }
-            tasks.add(t);
+            s.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Data file not found, starting with empty list, boss.");
         }
-        s.close();
     }
 }
