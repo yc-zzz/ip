@@ -1,5 +1,6 @@
 package johnchatbot;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Ui {
@@ -28,10 +29,27 @@ public class Ui {
 
     public void showTaskList(TaskList tasks) {
         if (tasks.isEmpty()) {
-            System.out.println("Nothing in list");
+            System.out.println("Nothing in list, bud.");
         } else {
             for (int i = 0; i < tasks.size(); i++) {
                 System.out.println((i + 1) + ". " + tasks.get(i));
+            }
+        }
+    }
+
+    public void showFoundTasks(TaskList tasks, String keyword){
+        ArrayList<Task> matches = new ArrayList<>();
+        for(int i = 0;i < tasks.size(); i++){
+            if (tasks.get(i).description.contains(keyword)){
+                matches.add(tasks.get(i));
+            }
+        }
+        if (matches.isEmpty()){
+            System.out.println("No matching task, amigo.");
+        } else {
+            System.out.println("Here are the matching tasks: ");
+            for (int i = 0; i < matches.size(); i++){
+                System.out.println((i+1) + ". " + matches.get(i));
             }
         }
     }

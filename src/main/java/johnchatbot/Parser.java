@@ -17,7 +17,8 @@ public class Parser {
             ui.showMessage("OK, I've marked this task as not done yet:\n  " + tasks.get(index));
         } else if (line.startsWith("todo ")) {
             String description = line.substring(5).trim();
-            if (description.isEmpty()) throw new JohnChatBotException("The description of a todo cannot be empty, mate.");
+            if (description.isEmpty())
+                throw new JohnChatBotException("The description of a todo cannot be empty, mate.");
             tasks.add(new Todo(description));
             ui.showMessage("Got it. I've added this task:\n  " + tasks.get(tasks.size() - 1));
         } else if (line.startsWith("deadline ")) {
@@ -26,7 +27,8 @@ public class Parser {
             tasks.add(new Deadline(parts[0].substring(9), parts[1]));
             ui.showMessage("Got it. I've added this task:\n  " + tasks.get(tasks.size() - 1));
         } else if (line.startsWith("event ")) {
-            if (!line.contains(" /from ") || !line.contains(" /to ")) throw new JohnChatBotException("Events need /from and /to timings, buddy.");
+            if (!line.contains(" /from ") || !line.contains(" /to "))
+                throw new JohnChatBotException("Events need /from and /to timings, buddy.");
             String[] parts = line.split(" /from | /to ");
             tasks.add(new Event(parts[0].substring(6), parts[1], parts[2]));
             ui.showMessage("Got it. I've added this task:\n  " + tasks.get(tasks.size() - 1));
@@ -36,6 +38,10 @@ public class Parser {
             Task removed = tasks.remove(index);
             ui.showMessage("Noted. I've removed this task:\n  " + removed);
             ui.showMessage("Now you have " + tasks.size() + " tasks in the list.");
+        } else if(line.startsWith("find ")) {
+            String keyword = line.substring(5).trim();
+            if (keyword.isEmpty()) throw new JohnChatBotException("Please provide a keyword to search for, fella.");
+            ui.showFoundTasks(tasks, keyword);
         } else {
             ui.showMessage("I have no idea what you are talking about, pal.");
         }
