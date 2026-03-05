@@ -1,7 +1,16 @@
 package johnchatbot;
 
+/**
+ * Parses the user command to decide how the UI will respond.
+ */
 public class Parser {
-
+    /**
+     * Parses the user input and executes a command
+     * @param line the raw input string by the user
+     * @param tasks the current task list
+     * @param ui the UI instance used
+     * @throws JohnChatBotException if command is malformed or missing fields
+     */
     public static void parse(String line, TaskList tasks, Ui ui) throws JohnChatBotException {
         if (line.equals("list")) {
             ui.showTaskList(tasks);
@@ -47,6 +56,12 @@ public class Parser {
         }
     }
 
+    /**
+     * Validate the task index input by user.
+     * @param index the index of the task extracted from user input.
+     * @param size current number of tasks in the task list
+     * @throws JohnChatBotException if index is negative or greater than tasklist size
+     */
     private static void validateIndex(int index, int size) throws JohnChatBotException {
         if (index < 0 || index >= size) throw new JohnChatBotException("That task index doesn't exist, cowboy.");
     }
