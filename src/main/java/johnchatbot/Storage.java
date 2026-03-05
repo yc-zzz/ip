@@ -1,12 +1,14 @@
 package johnchatbot;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-
+/**
+ * Stores the tasklist as a .txt file.
+ * Reads an existing file if file already exists.
+ */
 public class Storage {
     private String filePath;
 
@@ -14,6 +16,10 @@ public class Storage {
         this.filePath = filePath;
     }
 
+    /**
+     * loads the tasks if exists, create a new file if doesn't
+     * @return the tasks formated for the tasklist.
+     */
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
         try {
@@ -40,6 +46,11 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Stores the current tasklist as a txt file.
+     * @param tasks the current tasklist by the user.
+     * @throws IOException if error occurs while writing to the file.
+     */
     public void save(TaskList tasks) throws IOException {
         File f = new File(filePath);
         f.getParentFile().mkdirs();

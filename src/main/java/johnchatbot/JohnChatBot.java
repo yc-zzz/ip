@@ -1,3 +1,10 @@
+/**
+ * This program implements a chatbot that helps to manage tasks and deadlines
+ * This is the main class of the application
+ * @author Zhu Yicheng
+ * @version 1.0
+ * @since 05/03/2026
+ */
 package johnchatbot;
 
 import java.io.IOException;
